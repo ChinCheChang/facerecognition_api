@@ -39,7 +39,16 @@ app.post('/signin', (req, res) => {
 
   if (req.body.email === database.users[0].email &&
       req.body.password === database.users[0].password) {
-        res.json('success');
+        res.json({
+          status: 'success',
+          user : {
+            id: database.users[0].id,
+            name: database.users[0].name,
+            email: database.users[0].email,
+            entries: database.users[0].entries,
+            joined: database.users[0].joined
+          }
+        });
       } else {
         res.status(400).json('error logging in');
       }
@@ -50,7 +59,7 @@ app.post('/register', (req, res) => {
 
   bcrypt.hash(password, null, null, function(err, hash) {
     database.users.push({
-        id: '125',
+        id: database.users.length,
         name: name,
         email: email,
         password: hash,
@@ -59,8 +68,16 @@ app.post('/register', (req, res) => {
     })
   });
 
-  //need to change response
-  res.json(database.users);
+  res.json({
+    status: 'success',
+    user: {
+      id: database.users.length,
+      name: name,
+      email: email,
+      entries: 0,
+      joined: new Date()
+    }
+  });
 })
 
 app.get('/profile/:id', (req, res) => {
@@ -77,7 +94,7 @@ app.put('/image', (req, res) => {
     if (user.id === id) user.entries++;
     return user.id === id;
   })
-  found.length ? res.json(found) : res.status(404).json('no such user');
+  found.length ? res.json(found[0].entries) : res.status(404).json('no such user');
 })
 
 app.listen(3001, () => {
