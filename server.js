@@ -2,31 +2,44 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
+var knex = require('knex');
+
+const database = knex({
+  client: 'pg',
+  connection: {
+    host : '127.0.0.1',
+    user : 'postgres',
+    password : 'qzwx0310qzwx',
+    database : 'smart-brain'
+  }
+});
+
+console.log(database.select('*').from('users'));
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const database = {
-  users: [
-    {
-      id: '123',
-      name: 'John',
-      email: 'john@gmail.com',
-      password: 'cookies',
-      entries: 0,
-      joined: new Date()
-    },
-    {
-      id: '124',
-      name: 'Sally',
-      email: 'Sally@gmail.com',
-      password: 'Bananas',
-      entries: 0,
-      joined: new Date()
-    }
-  ]
-}
+// const database = {
+//   users: [
+//     {
+//       id: '123',
+//       name: 'John',
+//       email: 'john@gmail.com',
+//       password: 'cookies',
+//       entries: 0,
+//       joined: new Date()
+//     },
+//     {
+//       id: '124',
+//       name: 'Sally',
+//       email: 'Sally@gmail.com',
+//       password: 'Bananas',
+//       entries: 0,
+//       joined: new Date()
+//     }
+//   ]
+// }
 
 app.get('/', (req, res) => {
   res.send(database.users);
