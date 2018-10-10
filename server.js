@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
 var knex = require('knex');
 
-const database = knex({
+const db = knex({
   client: 'pg',
   connection: {
     host : '127.0.0.1',
@@ -14,32 +14,30 @@ const database = knex({
   }
 });
 
-console.log(database.select('*').from('users'));
-
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-// const database = {
-//   users: [
-//     {
-//       id: '123',
-//       name: 'John',
-//       email: 'john@gmail.com',
-//       password: 'cookies',
-//       entries: 0,
-//       joined: new Date()
-//     },
-//     {
-//       id: '124',
-//       name: 'Sally',
-//       email: 'Sally@gmail.com',
-//       password: 'Bananas',
-//       entries: 0,
-//       joined: new Date()
-//     }
-//   ]
-// }
+const database = {
+  users: [
+    {
+      id: '123',
+      name: 'John',
+      email: 'john@gmail.com',
+      password: 'cookies',
+      entries: 0,
+      joined: new Date()
+    },
+    {
+      id: '124',
+      name: 'Sally',
+      email: 'Sally@gmail.com',
+      password: 'Bananas',
+      entries: 0,
+      joined: new Date()
+    }
+  ]
+}
 
 app.get('/', (req, res) => {
   res.send(database.users);
@@ -70,35 +68,31 @@ app.post('/signin', (req, res) => {
 app.post('/register', (req, res) => {
   const { email, name, password } = req.body;
 
-  bcrypt.hash(password, null, null, function(err, hash) {
-    database.users.push({
-        id: database.users.length,
-        name: name,
-        email: email,
-        password: hash,
-        entries: 0,
-        joined: new Date()
-    })
-  });
-
-  res.json({
-    status: 'success',
-    user: {
-      id: database.users.length,
+  db('users')
+    .returning('*')
+    .insert({
       name: name,
       email: email,
-      entries: 0,
       joined: new Date()
-    }
-  });
+    })
+    .then(user => {
+      res.json(user[0]);
+    })
+    .catch(err => res.status(400).json('unable to register'));
 })
 
 app.get('/profile/:id', (req, res) => {
   const { id } = req.params;
-  const found = database.users.filter(user => {
-    return user.id === id;
-  })
-  found.length ? res.json(found) : res.status(404).json('no such user');
+
+  db.select('*').from('users').where({id})
+    .then(user => {
+      if(user.length){
+        res.json(user[0]);
+      } else {
+        res.status(400).json('Not found')
+      }
+    })
+    .catch(err => res.status(400).json('error get user'))
 })
 
 app.put('/image', (req, res) => {
