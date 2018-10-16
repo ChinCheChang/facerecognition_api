@@ -1,3 +1,4 @@
+//For signin: check if empty, check password by email, return user object
 const handleSignin = (req, res, db, bcrypt) => {
   const { email, password } = req.body;
   if (!email || !password){

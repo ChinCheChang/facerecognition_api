@@ -1,3 +1,4 @@
+//Use id to search the user in database 
 const handleProfile = (req, res, db) => {
   const { id } = req.params;
 

@@ -4,6 +4,7 @@ const app = new Clarifai.App({
  apiKey: process.env.API_CLARIFAI
 });
 
+//Call Clarifai API input: image URL, output: return object
 const handleApiCall = (req, res) => {
   app.models
     .predict(Clarifai.FACE_DETECT_MODEL, req.body.input)
@@ -11,7 +12,7 @@ const handleApiCall = (req, res) => {
     .catch(err => res.status(400).json('unable to use with API'))
 }
 
-
+//Increase the entries record the number of requests
 const handleImage = (req, res, db) => {
   const { id } = req.body;
 

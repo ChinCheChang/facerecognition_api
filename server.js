@@ -1,14 +1,25 @@
+/*  Face recognition APP Back end
+//  author: ChinCheChang
+// 1. What is this?
+// Input an image this app would recognize how many face are there in the picture and where are they by using Clarifai
+// 2. Explain import modules:
+//     body-parser: transfrom the body from post request to json format
+//     bcrypt-nodejs: For encrypting the password
+//     knex: connect the postgreSQL database
+*/
 const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
 var knex = require('knex');
 
+//Insert the function for the request
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 
+//initail database
 const db = knex({
   client: 'pg',
   connection: {
